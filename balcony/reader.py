@@ -1,11 +1,11 @@
-from config import get_logger, get_rich_console
-from errors import Error
-from utils import inform_about_developing_custom_resource_nodes
 import fnmatch  # unix like pattern matching
 from collections.abc import Iterable
 from typing import List, Dict, Tuple, Optional, Union
 from botocore.exceptions import ClientError
 
+from balcony.config import get_logger, get_rich_console
+from balcony.errors import Error
+from balcony.utils import inform_about_developing_custom_resource_nodes
 
 logger = get_logger(__name__)
 console = get_rich_console()

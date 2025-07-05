@@ -21,11 +21,6 @@ from botocore_utils import (
     IDENTIFIER_NAMES,
     cleanhtml,
 )
-from relations import RelationMap, Relation
-from reader import ServiceReader
-from registries import ResourceNodeRegistry
-from config import get_logger, get_rich_console
-from errors import Error
 
 from typing import List, Dict, Tuple, Union
 from botocore.utils import ArgumentGenerator
@@ -37,6 +32,13 @@ from rich.console import Group
 from rich.padding import Padding
 import jmespath
 from aws_jmespath_utils import jmespath_options
+
+
+from balcony.relations import RelationMap, Relation
+from balcony.reader import ServiceReader
+from balcony.registries import ResourceNodeRegistry
+from balcony.config import get_logger, get_rich_console
+from balcony.errors import Error
 
 logger = get_logger(__name__)
 
@@ -409,7 +411,7 @@ class ResourceNode:
         if not required_parameter_names:
             return api_params
 
-        if raw_api_parameters_list == False:
+        if not raw_api_parameters_list:
             # this func expect raw_api_parameters_list present, only adds to prepared parameters
             logger.debug(
                 f"FAILED TO CREATE VALID API PARAMETERS. Required Parameters are: [bold]{required_parameter_names}[/]"

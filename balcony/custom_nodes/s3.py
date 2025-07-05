@@ -122,7 +122,7 @@ class BucketLifecycleConfiguration(
         super().__init__(*args, **kwargs)
 
     def define_extra_relations(self):
-        r = super().define_extra_relations()
+        super().define_extra_relations()
         return [
             {
                 "service_name": "s3",

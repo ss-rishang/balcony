@@ -1,12 +1,13 @@
-from utils import icompare_two_camel_case_words
-from config import get_rich_console
-
+import re
 from typing import List, Union
 from botocore.model import Shape, DenormalizedStructureBuilder, OperationModel
 from rich.markup import escape
-import re
 from collections import namedtuple
 from rich.tree import Tree
+
+from balcony.utils import icompare_two_camel_case_words
+from balcony.config import get_rich_console
+
 
 ShapeAndTargetPath = namedtuple("ShapeAndTargetPath", ["shape", "target_path"])
 

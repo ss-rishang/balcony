@@ -1,5 +1,5 @@
-from config import get_logger
 from typing import Dict
+from balcony.config import get_logger
 
 logger = get_logger(__name__)
 

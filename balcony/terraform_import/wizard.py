@@ -5,14 +5,6 @@ import textwrap
 from typing import List
 import jmespath
 import yaml
-from terraform_import.importer import render_jinja2_template_with_data
-from terraform_import.parsers import parse_json_to_tf_import_config
-from config import (
-    get_logger,
-    get_rich_console,
-    USER_DEFINED_YAML_TF_IMPORT_CONFIGS_DIRECTORY,
-)
-from aws import BalconyAWS
 from rich.prompt import Prompt, Confirm
 import typer
 from botocore.utils import ArgumentGenerator
@@ -20,6 +12,16 @@ from rich.panel import Panel
 from rich.padding import Padding
 from rich.pretty import Pretty
 from rich.syntax import Syntax
+
+
+from balcony.terraform_import.importer import render_jinja2_template_with_data
+from balcony.terraform_import.parsers import parse_json_to_tf_import_config
+from balcony.config import (
+    get_logger,
+    get_rich_console,
+    USER_DEFINED_YAML_TF_IMPORT_CONFIGS_DIRECTORY,
+)
+from balcony.aws import BalconyAWS
 
 logger = get_logger(__name__)
 console = get_rich_console()

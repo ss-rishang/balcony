@@ -1,8 +1,9 @@
 import logging
-from rich.logging import RichHandler
-from rich.console import Console
 import os
 from pathlib import Path
+
+from rich.logging import RichHandler
+from rich.console import Console
 
 
 _console = Console(
@@ -88,7 +89,7 @@ if (
     )
     USER_DEFINED_YAML_TF_IMPORT_CONFIGS_DIRECTORY = False
 
-if USER_DEFINED_YAML_TF_IMPORT_CONFIGS_DIRECTORY != False:
+if USER_DEFINED_YAML_TF_IMPORT_CONFIGS_DIRECTORY:
     YAML_TF_IMPORT_CONFIGS_DIRECTORY = Path(
         USER_DEFINED_YAML_TF_IMPORT_CONFIGS_DIRECTORY
     )

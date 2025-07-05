@@ -1,5 +1,5 @@
-from nodes import ResourceNode
-from config import get_logger
+from balcony.nodes import ResourceNode
+from balcony.config import get_logger
 
 logger = get_logger(__name__)
 
@@ -9,7 +9,7 @@ class Parameter(ResourceNode, service_name="ssm", name="Parameter"):
         super().__init__(*args, **kwargs)
 
     def define_extra_relations(self):
-        r = super().define_extra_relations()
+        super().define_extra_relations()
         return [
             {
                 "service_name": "ssm",
@@ -28,7 +28,7 @@ class ParameterHistory(ResourceNode, service_name="ssm", name="ParameterHistory"
         super().__init__(*args, **kwargs)
 
     def get_operations_relations(self, operation_name: str):
-        r = super().get_operations_relations(operation_name)
+        super().get_operations_relations(operation_name)
         return [
             {
                 "service_name": "ssm",

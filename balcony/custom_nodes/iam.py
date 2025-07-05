@@ -1,7 +1,8 @@
-from nodes import ResourceNode
-from config import get_logger
-from relations import Relation
 import jmespath
+
+from balcony.nodes import ResourceNode
+from balcony.config import get_logger
+from balcony.relations import Relation
 
 logger = get_logger(__name__)
 

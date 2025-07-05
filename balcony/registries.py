@@ -1,6 +1,7 @@
-from config import get_logger, get_rich_console
-from yaml_config import find_and_parse_yaml_services
 from typing import Dict, Union
+
+from balcony.config import get_logger, get_rich_console
+from balcony.yaml_config import find_and_parse_yaml_services
 
 console = get_rich_console()
 logger = get_logger(__name__)

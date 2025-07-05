@@ -1,9 +1,9 @@
-from utils import get_all_available_services, _create_boto_session
-from nodes import ServiceNode
-from reader import ServiceReader
-
 from typing import Optional, List, Union
 import boto3
+
+from balcony.utils import get_all_available_services, _create_boto_session
+from balcony.nodes import ServiceNode
+from balcony.reader import ServiceReader
 
 
 class BalconyAWS:
@@ -48,7 +48,7 @@ class BalconyAWS:
             self.boto3_session = _create_boto_session()
 
         # Stores the created ServiceNodes by their names
-        self._service_nodes_map = {}
+        self._service_nodes_map: dict = {}
 
     def _create_service_node(self, service_name: str) -> None:
         """Creates the ServiceNode with the `self.boto3_session`
@@ -72,7 +72,7 @@ class BalconyAWS:
             self._create_service_node(service_name)
         return self._service_nodes_map.get(service_name)
 
-    def get_service_reader(self, service_name: str) -> ServiceReader:
+    def get_service_reader(self, service_name: str) -> Optional[ServiceReader]:
         """Gets the ServiceReader obj from the ServiceNode obj.
 
         Args:
@@ -84,6 +84,7 @@ class BalconyAWS:
         service_node = self.get_service_node(service_name)
         if service_node:
             return service_node.get_service_reader()
+        return None
 
     def read_operation(
         self,
@@ -93,7 +94,7 @@ class BalconyAWS:
         match_patterns: Optional[List[str]] = None,
         refresh: Optional[bool] = False,
         follow_pagination: Optional[bool] = False,
-    ) -> Union[dict, bool]:
+    ) -> tuple[list | bool | None, ...] | bool:
         """Call the AWS API operation for the given `service_name`, `resource_node_name` and `operation_name` values.
 
         Args:

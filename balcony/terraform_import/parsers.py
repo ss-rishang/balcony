@@ -1,16 +1,17 @@
-from utils import find_all_yaml_files
-from config import (
+from typing import Union, Tuple
+import yaml
+from collections import defaultdict
+
+from balcony.utils import find_all_yaml_files
+from balcony.config import (
     get_logger,
     YAML_TF_IMPORT_CONFIGS_DIRECTORY,
     USER_DEFINED_YAML_TF_IMPORT_CONFIGS_DIRECTORY,
 )
-from terraform_import.models import (
+from balcony.terraform_import.models import (
     CustomTerraformImportConfigFile,
     # TerraformImportConfig,
 )
-from typing import Union, Tuple
-import yaml
-from collections import defaultdict
 
 logger = get_logger(__name__)
 _TERRAFORM_TYPES_KEY = "_terraform_types"
