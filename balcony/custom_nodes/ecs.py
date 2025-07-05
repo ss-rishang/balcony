@@ -4,17 +4,16 @@
 # logger = get_logger(__name__)
 
 
-
 # class Cluster(ResourceNode, service_name="ecs", name="Clusters"):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
-    
+
 #     def generate_jmespath_selector_from_relations(self, operation_name, relation_list):
 #         r = super().generate_jmespath_selector_from_relations(operation_name, relation_list)
 #         if operation_name == 'ListClusters':
 #             return '[*].{cluster: clusterArns}[][]'
 #         return r
-    
+
 #     # def define_extra_relations(self):
 #     #     r= super().define_extra_relations()
 #     #     return [{
@@ -26,7 +25,7 @@
 #     #         "operation_name": "ListClusters",
 #     #         "target_path": "clusterArns"
 #     #     }]
-        
+
 
 # class Tasks(ResourceNode, service_name="ecs", name="Tasks"):
 #     def __init__(self, *args, **kwargs):
@@ -39,7 +38,7 @@
 #         if operation_name == 'ListTasks':
 #             return ['cluster']
 #         return r
-    
+
 #     # def define_extra_relations(self):
 #     #     return [
 #     #         {
@@ -52,7 +51,7 @@
 #     #             "target_path": "taskArns"
 #     #         }
 #     #     ]
-     
+
 # class Services(ResourceNode, service_name="ecs", name="Services"):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
@@ -62,16 +61,16 @@
 #         if operation_name == 'ListServices':
 #             return ['cluster']
 #         return r
-    
+
 #     def generate_jmespath_selector_from_relations(self, operation_name, relation_list) -> str:
 #         if operation_name == 'ListServices':
 #             return "[*].clusterArns[].{cluster: @}"
 #         if operation_name == 'DescribeServices':
 #             return "[*].serviceArns[].{services: [@]}"
-        
+
 #         return super().generate_jmespath_selector_from_relations(operation_name, relation_list)
 
-    
+
 #     def define_extra_relations(self):
 #         return [
 #             {
@@ -118,7 +117,6 @@
 #     #         }
 #     #         ], None
 #     #     return r
-    
+
 #     # def define_extra_relations(self):
 #     #     r= super().define_extra_relations()
-   

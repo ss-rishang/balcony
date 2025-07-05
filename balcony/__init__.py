@@ -13,6 +13,7 @@ Otherwise you'd need to specify the module name:
 from balcony.aws import BalconyAWS
 ```
 """
+
 import os
 import sys
 

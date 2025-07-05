@@ -5,6 +5,7 @@ import jmespath
 
 logger = get_logger(__name__)
 
+
 class GroupPolicy(ResourceNode, service_name="sqs", name="QueueUrl"):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,48 +1,46 @@
 import json
 import textwrap
 from boto3_data_export import export_boto3_operations_by_service
-from utils import (
-    get_all_available_services,
-    ifind_similar_names_in_list,
-    _create_boto_session,
-    is_terraform_aws_resource_type
-)
-from config import (
-    get_logger,
-    get_rich_console,
-    set_log_level_at_runtime,
-    clear_relations_cache,
-    BALCONY_RELATIONS_DIR
-)
-
-# required for loading custom resource nodes into registry
-from custom_nodes import *  # noqa
-from aws import BalconyAWS
-from rich.text import Text
-import typer
-import jmespath
-from aws_jmespath_utils import jmespath_options
-from typing import Optional, List, Dict, Generator
+from rich.padding import Padding
+from typing import Optional, List, Dict, Generator, Tuple
 from rich.columns import Columns
 from rich.panel import Panel
 import logging
 from pathlib import Path
-from terraform_import.importer import (
+import typer
+import jmespath
+from aws_jmespath_utils import jmespath_options
+
+from balcony.utils import (
+    get_all_available_services,
+    ifind_similar_names_in_list,
+    _create_boto_session,
+    is_terraform_aws_resource_type,
+)
+from balcony.config import (
+    get_logger,
+    get_rich_console,
+    set_log_level_at_runtime,
+    clear_relations_cache,
+    BALCONY_RELATIONS_DIR,
+)
+
+# Automatic loading of custom resource nodes into registry
+import balcony.custom_nodes  # noqa: F401
+from balcony.aws import BalconyAWS
+from balcony.terraform_import.importer import (
     generate_import_block_for_resource,
     get_importable_resources,
 )
-from terraform_import.wizard import (
+from balcony.terraform_import.wizard import (
     interactive_help,
 )
-from rich.padding import Padding
-import re
 
 console = get_rich_console()
 logger = get_logger(__name__)
 session = _create_boto_session()
 balcony_aws = BalconyAWS(session)
 app = typer.Typer(no_args_is_help=True, pretty_exceptions_enable=False)
-
 
 
 @app.callback()
@@ -128,7 +126,6 @@ def _list_service_or_resource(
     resource_node: Optional[str] = False,
     screen_pager: Optional[bool] = False,
 ) -> None:
-
     available_service_names = get_all_available_services(session)
     if not service and not resource_node:
         # nothing is given
@@ -148,7 +145,8 @@ def _list_service_or_resource(
                 return
             else:
                 raise typer.Exit(
-                    f"Invalid service name: {service}. Please pick a proper one.", code=-1
+                    f"Invalid service name: {service}. Please pick a proper one.",
+                    code=-1,
                 )
 
         service_node = balcony_aws.get_service_node(service)
@@ -176,7 +174,6 @@ def _list_service_or_resource(
         resource_node_names = [_rn.name for _rn in resource_nodes]
         resource_node_obj = service_node.get_resource_node_by_name(resource_node)
         if not resource_node_obj:
-
             similar_resource_names = ifind_similar_names_in_list(
                 resource_node, resource_node_names
             )
@@ -187,7 +184,7 @@ def _list_service_or_resource(
             else:
                 raise typer.Exit(
                     f"Invalid Resource Node name: [bold]{resource_node}[/] for Service: [bold]{service}[/].",
-                    code=-1
+                    code=-1,
                 )
         operations_panel = service_node._get_operation_details_panel(
             resource_node_obj.name
@@ -333,11 +330,12 @@ def aws_main_command(  # noqa
             )
 
         if jmespath_selector:
-
             logger.debug(
                 f"Using jmespath selector: {jmespath_selector} to query the returned data."
             )
-            read_data = jmespath.search(jmespath_selector, read_data, options=jmespath_options)
+            read_data = jmespath.search(
+                jmespath_selector, read_data, options=jmespath_options
+            )
 
         if formatter:
             if read_data:
@@ -392,7 +390,7 @@ def terraform_import_support_matrix(
 ):
     service_resource_list = get_importable_resources()
 
-    header = f"# Balcony Terraform Import Support Matrix\n\n\n".format()
+    header = "# Balcony Terraform Import Support Matrix\n\n\n".format()
     header += f"| {'TerraformResourceType':<50} | {'Service':>15} | {'Resource':45} |\n".format()
     header += f"| {'---':50} | {'---':15} | {'---':45} |\n".format()
     result = header
@@ -400,16 +398,17 @@ def terraform_import_support_matrix(
     for i, (terraform_type, service_name, resource_name) in enumerate(
         service_resource_list
     ):
-        cur_line = f"| {terraform_type:<50} | {service_name:>15} | {resource_name:45} |\n"
+        cur_line = (
+            f"| {terraform_type:<50} | {service_name:>15} | {resource_name:45} |\n"
+        )
         result += cur_line
 
     if no_markdown_render:
         console.print(result)
     else:
         from rich.markdown import Markdown
+
         console.print(Markdown(result))
-
-
 
 
 @app.command(
@@ -489,13 +488,20 @@ def terraform_import_command(
         console.print(rendered_service_resource_list)
         return  # list option is enabled, do not run the actual importing code.
 
-    is_terraform_r_type_given = is_terraform_aws_resource_type(service_or_tf_resource_type) and resource_node is None
+    is_terraform_r_type_given = (
+        is_terraform_aws_resource_type(service_or_tf_resource_type)
+        and resource_node is None
+    )
     if is_terraform_r_type_given:
-        logger.debug(f"Terraform resource type is given: {service_or_tf_resource_type} instead of service and resource node.")
+        logger.debug(
+            f"Terraform resource type is given: {service_or_tf_resource_type} instead of service and resource node."
+        )
         pass
     elif (not service_or_tf_resource_type) or (not resource_node):
-        _list_service_or_resource(service_or_tf_resource_type, resource_node, screen_pager=screen)
-        console.print(f"[red bold]Please pick a Service and Resource Node[/]")
+        _list_service_or_resource(
+            service_or_tf_resource_type, resource_node, screen_pager=screen
+        )
+        console.print("[red bold]Please pick a Service and Resource Node[/]")
         return
 
     import_blocks = None
@@ -503,7 +509,7 @@ def terraform_import_command(
         import_blocks = generate_import_block_for_resource(
             balcony_aws,
             terraform_resource_type=service_or_tf_resource_type,
-            follow_pagination=follow_pagination
+            follow_pagination=follow_pagination,
         )
     else:
         import_blocks = generate_import_block_for_resource(
@@ -514,7 +520,9 @@ def terraform_import_command(
         )
 
     if not import_blocks:
-        logger.debug(f"No import blocks generated for {service_or_tf_resource_type}.{resource_node}")
+        logger.debug(
+            f"No import blocks generated for {service_or_tf_resource_type}.{resource_node}"
+        )
 
         fail_msg = textwrap.dedent(
             f"""
@@ -546,7 +554,7 @@ def terraform_import_command(
         if screen:
             with console.pager(styles=True):
                 console.print("\n".join(import_blocks))
-        else:            
+        else:
             console.print("\n".join(import_blocks))
 
     return  # import_blocks
@@ -598,7 +606,7 @@ def wizard_the_terraform_import_configurer(
     if (not service) or (not resource_node):
         _list_service_or_resource(service, resource_node, screen_pager=screen)
 
-        console.print(f"[red bold]Please pick a Service and Resource Node[/]")
+        console.print("[red bold]Please pick a Service and Resource Node[/]")
         return
 
     # if we got here, we have both service and resource node
@@ -606,7 +614,10 @@ def wizard_the_terraform_import_configurer(
     return
 
 
-@app.command("clear-cache", help=f"Clear relations json cache, located at: {BALCONY_RELATIONS_DIR}")
+@app.command(
+    "clear-cache",
+    help=f"Clear relations json cache, located at: {BALCONY_RELATIONS_DIR}",
+)
 def clear_cache_command(
     # service: Optional[str] = typer.Argument(None, show_default='all',
     # help='Name of the Service to clear relation caches of', autocompletion=_complete_service_name),
@@ -616,17 +627,19 @@ def clear_cache_command(
     for deleted_service in deleted_service_caches:
         logger.info(f"[green]Deleted[/] {deleted_service}")
 
+
 @app.command(
     "export-aws-api-operations",
     help="Export all AWS API operations by service as JSON",
 )
 def export_command(
-     output_file: str = typer.Option(
+    output_file: str = typer.Option(
         None,
         "--output",
         "-o",
         show_default=False,
-        help="Output JSON file name. If not provided, will print to console.")
+        help="Output JSON file name. If not provided, will print to console.",
+    ),
 ):
     service_and_operations = export_boto3_operations_by_service(balcony_aws)
     if output_file:
@@ -660,7 +673,7 @@ def info_command():
         console.print(f"  - [green bold]{available_profile}[/]")
     console.print("")
     console.print(
-            textwrap.dedent("""
+        textwrap.dedent("""
             [yellow]You can configure the AWS Profile and Region by setting the
             the $[bold]AWS_DEFAULT_REGION[/] and $[bold]AWS_PROFILE[/] environment variables.[/]
             

@@ -198,7 +198,6 @@ def is_shape_non_collection_type(shape_and_target_path: ShapeAndTargetPath) -> b
 def annotate_shape_and_its_members_with_target_path(
     shape: Shape, target_str: str = ""
 ) -> Shape:
-
     if not shape or shape.name in BLACKLISTED_SHAPE_NAMES:
         return False
 
@@ -210,7 +209,7 @@ def annotate_shape_and_its_members_with_target_path(
         elif shape_key and target_str != "":  # target_str is already available
             new_target_str = f"{target_str}[*].{shape_key}"
         setattr(shape, "target_path", new_target_str)
-        
+
         for member_key, member in shape.members.items():
             setattr(member, "key_name", member_key)
             setattr(member, "parent_name", shape.name)
@@ -224,7 +223,7 @@ def annotate_shape_and_its_members_with_target_path(
         elif shape_key and target_str != "":  # target_str is already available
             new_target_str = f"{target_str}[*].{shape_key}"
         setattr(shape, "target_path", new_target_str)
-        
+
         only_member = shape.member
         annotate_shape_and_its_members_with_target_path(only_member, new_target_str)
         # found_members_shapes.append(only_member)
@@ -239,7 +238,6 @@ def annotate_shape_and_its_members_with_target_path(
         setattr(shape, "target_path", new_target_str)
 
     return shape
-
 
 
 def _flatten_shape_to_its_members_and_target_paths(
@@ -335,10 +333,8 @@ def rich_str_shape(shape: Shape, remove_documentation=False) -> str:
     if target_path:
         target_path = f"[].{target_path}[]"
         target_path = f"[green]{target_path}[/]"
-    
-    shape_str = (
-        f"[blue bold]{key_name}[/] — ({type_name}) — {target_path}  {shape_documentation}"
-    )
+
+    shape_str = f"[blue bold]{key_name}[/] — ({type_name}) — {target_path}  {shape_documentation}"
     if key_name == "":
         lead = ""
         if type_name == "list":
@@ -355,15 +351,18 @@ def generate_rich_tree_from_shape(shape: Shape, remove_documentation=False) -> T
     tree = Tree(rich_str_shape(shape), guide_style="red")
 
     shape = annotate_shape_and_its_members_with_target_path(shape)
-    
-    def _recursive_stringify_shape(shape, node: Tree, remove_documentation=False):
 
+    def _recursive_stringify_shape(shape, node: Tree, remove_documentation=False):
         members = get_members_shapes(shape)
         for member in members:
-            member_str = rich_str_shape(member, remove_documentation=remove_documentation)
+            member_str = rich_str_shape(
+                member, remove_documentation=remove_documentation
+            )
             if member.type_name in SHAPE_COLLECTION_TYPES:
                 new_node = node.add(member_str)
-                _recursive_stringify_shape(member, new_node, remove_documentation=remove_documentation)
+                _recursive_stringify_shape(
+                    member, new_node, remove_documentation=remove_documentation
+                )
             else:
                 node.add(member_str)
 

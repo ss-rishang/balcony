@@ -1,4 +1,4 @@
-from config import get_logger, YAML_IGNORE_PREFIX, YAML_SERVICES_DIRECTORY
+from config import get_logger, YAML_SERVICES_DIRECTORY
 from yaml_validators import YamlService
 from utils import find_all_yaml_files
 import yaml
@@ -44,7 +44,9 @@ def find_and_parse_yaml_services() -> List[YamlService]:
     for yaml_file in yaml_files:
         yaml_service, error = parse_yaml_file_to_service(yaml_file)
         if error is None and yaml_service:
-            logger.debug(f"Succesfully parsed [bold]{yaml_file}[/] to Yaml ResourceNode")
+            logger.debug(
+                f"Succesfully parsed [bold]{yaml_file}[/] to Yaml ResourceNode"
+            )
             found_yaml_services.append(yaml_service)
         else:
             logger.debug(

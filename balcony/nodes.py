@@ -6,14 +6,12 @@ from utils import (
     camel_case_split,
     compare_nouns,
     icompare_two_token_lists,
-    compare_two_camel_case_words,
     str_relations,
     is_word_in_a_list_of_words,
     inform_about_developing_custom_resource_nodes,
 )
 from botocore_utils import (
     get_input_shape,
-    annotate_shape_and_its_members_with_target_path,
     get_max_results_value_from_shape,
     find_key_in_dict_keys,
     generate_rich_tree_from_shape,
@@ -152,7 +150,6 @@ class ResourceNode:
         req_param_markup = f"[bold magenta]{', '.join(required_parameter_names)}[/]"
 
         if len(required_parameter_names) == 1:
-
             # only one parameter exists
             single_relation_list = None
             single_parameter_name = required_parameter_names[0]
@@ -329,7 +326,9 @@ class ResourceNode:
             direct_related_operation
         )
         found_api_paramaters = jmespath.search(
-            generated_jmespath_nested_selector, directly_related_operation_data, options=jmespath_options
+            generated_jmespath_nested_selector,
+            directly_related_operation_data,
+            options=jmespath_options,
         )
         raw_api_parameters_list = found_api_paramaters
         # for r_api_param in found_api_paramaters:
@@ -494,7 +493,6 @@ class ResourceNode:
     def _rich_operation_details_panel(
         self, operation_name: str, remove_input_shape=False, remove_documentation=False
     ) -> Panel:
-
         operation_model = self.get_operation_model(operation_name)
         input_shape = get_input_shape(operation_model)
         output_shape = operation_model.output_shape

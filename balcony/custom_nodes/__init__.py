@@ -1,20 +1,20 @@
 """
-All custom Resource Node classes **must be exported here**.
+Automatic loading of all custom Resource Node modules.
 
-balcony dynamically imports custom_nodes folder like this:
-```python
-import custom_nodes
-```
-
-When only the module name is given, python will try to import the `__init__.py` file in the package.
-So, all custom classes must be exported here to be imported by balcony.
+This module automatically imports all .py files in the custom_nodes directory.
+Custom classes register themselves via their __init_subclass__ method.
 """
 
-from .codebuild import *
-from .ecs import *
-from .lambda_functions import *
-from .ssm import *
-from .ses import *
-from .iam import *
-from .s3 import *
-from .sqs import *
+import importlib
+import pkgutil
+from pathlib import Path
+
+# Get the directory of this package
+package_dir = Path(__file__).parent  # type: ignore
+
+# Automatically import all modules in this package
+for module_info in pkgutil.iter_modules([str(package_dir)]):
+    try:
+        importlib.import_module(f".{module_info.name}", __name__)
+    except ImportError:
+        pass  # Skip modules that can't be imported

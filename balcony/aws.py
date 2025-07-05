@@ -17,7 +17,7 @@ class BalconyAWS:
     roles = baws.read_resource_node('iam', 'Role', follow_pagination=True)
     print(roles)
     ```
-    
+
     ```python title="Creating a BalconyAWS obj and reading IAM Roles w/ Custom session"
     from balcony import BalconyAWS
 

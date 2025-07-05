@@ -2,7 +2,7 @@ import os
 import random
 import string
 import textwrap
-from typing import List, Union
+from typing import List
 import jmespath
 import yaml
 from terraform_import.importer import render_jinja2_template_with_data
@@ -114,7 +114,7 @@ def interactive_help(balcony_aws: BalconyAWS, service: str, resource_name: str):
         Padding(
             Panel(  # noqa
                 textwrap.dedent(
-                    f"""
+                    """
                 Welcome to the Balcony interactive help for generating Terraform import configurations for AWS Services.
                 
                 You'll be asked a series of questions to help you generate the configuration.                        
@@ -218,7 +218,7 @@ def interactive_help(balcony_aws: BalconyAWS, service: str, resource_name: str):
             _filtered_data = jmespath.search(
                 input_jmespath_selector, mock_output_data_list
             )
-        except jmespath.exceptions.ParseError as e:
+        except jmespath.exceptions.ParseError:
             _filtered_data = False
 
         if not _filtered_data:
@@ -257,8 +257,8 @@ def interactive_help(balcony_aws: BalconyAWS, service: str, resource_name: str):
                 console.print(
                     Padding(
                         Panel(
-                            f"[blue bold] Note:[/][blue] You've selected a non-dict data. You can access the elements with 'item' keyword.",
-                            expand=False
+                            "[blue bold] Note:[/][blue] You've selected a non-dict data. You can access the elements with 'item' keyword.",
+                            expand=False,
                         ),
                         (1, 1),
                     )
@@ -407,15 +407,13 @@ def interactive_help(balcony_aws: BalconyAWS, service: str, resource_name: str):
 
     if not yaml_output:
         console.print(
-            f"[red bold]Error while generating yaml output. Enable --debug to see more messages.[/red bold]"
+            "[red bold]Error while generating yaml output. Enable --debug to see more messages.[/red bold]"
         )
         return False
 
     console.print("Your import-configuration yaml output:")
     console.print()
-    console.print(
-        Syntax(yaml_output, "yaml", theme="monokai", line_numbers=False)
-    )  # noqa
+    console.print(Syntax(yaml_output, "yaml", theme="monokai", line_numbers=False))  # noqa
 
     gen_filename = f"{service}-{resource_name}-wizard.yaml"
     saved_filepath = save_tf_input_config_to_user_defined_yaml_dir(
@@ -424,14 +422,14 @@ def interactive_help(balcony_aws: BalconyAWS, service: str, resource_name: str):
 
     if not saved_filepath:
         console.print(
-            f"[yellow bold]Warning:[/] You can set a custom directory for your import configurations with [bold]BALCONY_TERRAFOM_IMPORT_CONFIG_DIR[/] environment variable."
+            "[yellow bold]Warning:[/] You can set a custom directory for your import configurations with [bold]BALCONY_TERRAFOM_IMPORT_CONFIG_DIR[/] environment variable."
         )
         console.print(
-            f"If you set this, balcony will read your import configurations from that directory. And terraform-wizard will auto-save your generated import configuration to that directory."
+            "If you set this, balcony will read your import configurations from that directory. And terraform-wizard will auto-save your generated import configuration to that directory."
         )
         console.print(
             Syntax(
-                f"export BALCONY_TERRAFOM_IMPORT_CONFIG_DIR=~/balcony-tf-import-configs",
+                "export BALCONY_TERRAFOM_IMPORT_CONFIG_DIR=~/balcony-tf-import-configs",
                 "bash",
                 theme="monokai",
                 line_numbers=False,
@@ -440,7 +438,7 @@ def interactive_help(balcony_aws: BalconyAWS, service: str, resource_name: str):
 
     elif saved_filepath:
         console.print(
-            f"[bold]Since you've set the env. var. 'BALCONY_TERRAFOM_IMPORT_CONFIG_DIR', auto save is enabled.[/]"
+            "[bold]Since you've set the env. var. 'BALCONY_TERRAFOM_IMPORT_CONFIG_DIR', auto save is enabled.[/]"
         )
 
         console.print(

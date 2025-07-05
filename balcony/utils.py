@@ -20,11 +20,8 @@ _terraform_aws_resource_type_pattern_compiled = compile(r"^aws_[a-zA-Z0-9_-]+$")
 
 
 def jmespath_search(jmespath_expression, data):
-    return jmespath.search(
-        jmespath_expression,
-        data,
-        options=jmespath_options
-    )
+    return jmespath.search(jmespath_expression, data, options=jmespath_options)
+
 
 def is_terraform_aws_resource_type(resource_type: str) -> bool:
     """Check for terraform aws resource type being valid
@@ -119,9 +116,7 @@ def inform_about_developing_custom_resource_nodes():
         Visit [bold][link=https://oguzhan-yilmaz.github.io/balcony/development/developing-custom-resource-nodes/]Custom Resource Development Documentation[/link][/] to learn more.
         
         You can also track the [bold][link=https://github.com/oguzhan-yilmaz/balcony/issues]Github Issues[/link][/] or create a new issue.
-        """.lstrip(
-                "\n"
-            )
+        """.lstrip("\n")
         )
     )
 

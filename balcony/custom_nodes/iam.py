@@ -88,7 +88,6 @@ class UserPolicy(ResourceNode, service_name="iam", name="UserPolicy"):
         super().__init__(*args, **kwargs)
 
     def get_operations_relations(self, operation_name: str):
-
         if operation_name == "GetUserPolicy":
             return [
                 Relation(
@@ -136,7 +135,6 @@ class GroupPolicy(ResourceNode, service_name="iam", name="GroupPolicy"):
         super().__init__(*args, **kwargs)
 
     def get_operations_relations(self, operation_name: str):
-
         if operation_name == "GetGroupPolicy":
             return [
                 Relation(

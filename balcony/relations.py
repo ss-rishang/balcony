@@ -1,7 +1,6 @@
 from botocore_utils import (
     get_shape_name,
     flatten_shape_to_its_non_collection_shape_and_target_paths,
-    ShapeAndTargetPath,
 )
 from config import get_logger, BALCONY_RELATIONS_DIR
 from utils import icompare_two_camel_case_words
@@ -17,6 +16,7 @@ logger = get_logger(__name__)
 @dataclass
 class Relation:
     """Basic dataclass to hold the relation information."""
+
     service_name: str
     resource_node_name: str
     operation_name: str
@@ -92,7 +92,6 @@ class RelationMap:
         self.service_node = service_node
         self._relations_map: Dict = None
 
-
     def serialize_relations_map(self, relations_map: Dict) -> Dict:
         """Serializes the RelationMap dictionary to a json serializable dictionary.
 
@@ -127,7 +126,6 @@ class RelationMap:
             relations_map[parameter_name] = deserialized_relations
         return relations_map
 
-
     def get_relations_map(self, refresh: bool = False) -> Dict:
         """Tries the fetch the cached RelationMap from file,
         or generates and saves it to file.
@@ -148,7 +146,9 @@ class RelationMap:
 
         generated_relations = self.generate_relation_map()
         self._relations_map = generated_relations
-        self.save_relations_map_to_file(self.serialize_relations_map(self._relations_map))
+        self.save_relations_map_to_file(
+            self.serialize_relations_map(self._relations_map)
+        )
         return self._relations_map
 
     def get_parameters_generated_relations(
@@ -250,7 +250,9 @@ class RelationMap:
         resource_nodes = self.service_node.get_resource_nodes()
         # Create a list of dicts for each resource_node, operation_name and required_parameter_names
         # to be able to calculate the all required parameter names befgore generating the relations
-        operations_to_required_parameter_list = self._generate_resource_node_parameters_list(resource_nodes) # noqa
+        operations_to_required_parameter_list = (
+            self._generate_resource_node_parameters_list(resource_nodes)
+        )  # noqa
 
         # Get every unique required parameter names
         unique_required_shape_names = set()
@@ -289,7 +291,9 @@ class RelationMap:
 
             # get a list of output shape's members, with their target path
             output_shape_and_target_paths = (
-                flatten_shape_to_its_non_collection_shape_and_target_paths(output_shape_member)
+                flatten_shape_to_its_non_collection_shape_and_target_paths(
+                    output_shape_member
+                )
             )
             # for each member shape (attr.) of this operations output shape
             # try to find it in the unique required parameter list

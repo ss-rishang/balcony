@@ -6,7 +6,7 @@
 # class Function(ResourceNode, service_name="lambda", name="Function"):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
-    
+
 #     def define_extra_relations(self):
 #         r= super().define_extra_relations()
 #         return [{

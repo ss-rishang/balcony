@@ -1,16 +1,17 @@
 import re
 import textwrap
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 import jmespath
 from aws_jmespath_utils import jmespath_options
-from terraform_import.models import TerraformImportConfig
-from terraform_import.parsers import (
+from jinja2 import Environment
+
+from balcony.terraform_import.models import TerraformImportConfig
+from balcony.terraform_import.parsers import (
     parse_custom_terraform_import_configs_from_files,
     _TERRAFORM_TYPES_KEY,
 )
-from config import get_logger
-from aws import BalconyAWS
-from jinja2 import Environment
+from balcony.config import get_logger
+from balcony.aws import BalconyAWS
 
 logger = get_logger(__name__)
 # cache for read & parsed custom terraform import configuration .yml files
@@ -88,7 +89,9 @@ def gen_resource_name_and_import_id_from_op_data_(
         # filter the operation data if jmespath_query is given
         # and render them one by one
         if jmespath_query:
-            resource_data = jmespath.search(jmespath_query, operation_data, options=jmespath_options)
+            resource_data = jmespath.search(
+                jmespath_query, operation_data, options=jmespath_options
+            )
             logger.debug(
                 f"Filtered data using jmespath query: [bold]{jmespath_query}[/]"
             )
@@ -266,7 +269,9 @@ def generate_import_block_for_resource(
     if (not service or not resource_node) and terraform_resource_type:
         operation_markup = f"[bold cyan]{terraform_resource_type}[/]"
 
-    logger.debug(f"[underline bold][green]Starting to Generate[/] Terraform import blocks for[/] {operation_markup}.")
+    logger.debug(
+        f"[underline bold][green]Starting to Generate[/] Terraform import blocks for[/] {operation_markup}."
+    )
     resulting_tf_import_blocks = []
     tf_import_configs = get_import_config_for(
         service, resource_node, terraform_resource_type
@@ -288,5 +293,7 @@ def generate_import_block_for_resource(
 
         if tf_import_blocks and isinstance(tf_import_blocks, list):
             resulting_tf_import_blocks.extend(tf_import_blocks)
-    logger.debug(f"[underline bold][green]Done Generating[/] Terraform import blocks for[/] {operation_markup}.")
+    logger.debug(
+        f"[underline bold][green]Done Generating[/] Terraform import blocks for[/] {operation_markup}."
+    )
     return resulting_tf_import_blocks

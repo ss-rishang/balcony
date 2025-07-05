@@ -35,7 +35,11 @@ class ServiceReader:
         self.response_data = {}
 
     def call_operation(
-        self, resource_node: "ResourceNode", operation_name: str, api_parameter: Dict, follow_pagination : Optional[bool] = False # noqa  
+        self,
+        resource_node: "ResourceNode",
+        operation_name: str,
+        api_parameter: Dict,
+        follow_pagination: Optional[bool] = False,  # noqa
     ) -> Union[dict, bool]:
         """Calls the given AWS operation with `api_parameter` dict.
         Saves the response data on `self.response_data` and returns it.
@@ -75,11 +79,14 @@ class ServiceReader:
                 page_value_in_response = response.get(pagination_output_key, False)
                 if page_value_in_response:
                     paginated_api_parameters = api_parameter.copy()
-                    paginated_api_parameters[
-                        pagination_parameter_name
-                    ] = page_value_in_response
+                    paginated_api_parameters[pagination_parameter_name] = (
+                        page_value_in_response
+                    )
                     self.call_operation(
-                        resource_node, operation_name, paginated_api_parameters, follow_pagination=follow_pagination
+                        resource_node,
+                        operation_name,
+                        paginated_api_parameters,
+                        follow_pagination=follow_pagination,
                     )
         except ClientError as e:
             logger.debug(
@@ -152,7 +159,7 @@ class ServiceReader:
             response (dict): boto API response dict
         """
         resource_node_exists = (
-            self.response_data.get(resource_node_name, False) != False # noqa
+            self.response_data.get(resource_node_name, False) != False  # noqa
         )
 
         if not resource_node_exists:
@@ -169,7 +176,7 @@ class ServiceReader:
         operation_name: str,
         match_patterns: Optional[List[str]] = None,
         refresh: Optional[bool] = False,
-        follow_pagination: Optional[bool] = False
+        follow_pagination: Optional[bool] = False,
     ) -> Tuple[Union[List, bool], Union[Error, None]]:
         """Reads the given operation.
         If the operation is called with generated parameters, `match_patterns` can be used to filter the generated parameters.
@@ -289,7 +296,12 @@ class ServiceReader:
                     api_parameters_for_operation = pattern_matched_api_parameters
                 for api_parameter in api_parameters_for_operation:
                     # for each parameter generated, call the actual operation
-                    self.call_operation(resource_node, operation_name, api_parameter, follow_pagination=follow_pagination)
+                    self.call_operation(
+                        resource_node,
+                        operation_name,
+                        api_parameter,
+                        follow_pagination=follow_pagination,
+                    )
             # after calling the same operation for the different parameters
             # get all the response data made for this operation_name
             logger.debug(f"[underline][bold]Done Reading[/] {operation_markup}[/]")
@@ -301,7 +313,10 @@ class ServiceReader:
         # for each relation, fetch the related resource's data.
         for rel in relations_of_operation:
             rel_operation_data = self.read_operation(
-                rel.resource_node_name, rel.operation_name, refresh=refresh, follow_pagination=follow_pagination
+                rel.resource_node_name,
+                rel.operation_name,
+                refresh=refresh,
+                follow_pagination=follow_pagination,
             )
             if not rel_operation_data:
                 logger.debug(
@@ -320,13 +335,13 @@ class ServiceReader:
         ) = resource_node.generate_api_parameters_from_operation_data(
             operation_name, relations_of_operation, all_related_operations_data
         )
-        
+
         if generated_api_parameters == [] and generation_error is None:
             # no errors, just no data available to generate api parameters
             logger.debug(
                 f"[bold yellow]WARNING: There's no related resource data in your account to generate the api params for: {operation_markup}."
             )
-        
+
         if generation_error is not None:
             logger.debug(
                 f"Failed to generate api parameters for {operation_markup}: {generation_error}"
@@ -350,7 +365,12 @@ class ServiceReader:
                 api_parameters_for_operation = pattern_matched_api_parameters
             for api_parameter in api_parameters_for_operation:
                 # for each parameter generated, call the actual operation
-                self.call_operation(resource_node, operation_name, api_parameter, follow_pagination=follow_pagination)
+                self.call_operation(
+                    resource_node,
+                    operation_name,
+                    api_parameter,
+                    follow_pagination=follow_pagination,
+                )
         else:
             logger.debug(f"Failed to generate api parameters for {operation_markup}")
 
@@ -385,6 +405,10 @@ class ServiceReader:
 
         for operation_name in resource_node.operation_names:
             self.read_operation(
-                resource_node_name, operation_name, match_patterns, refresh=refresh, follow_pagination=follow_pagination
+                resource_node_name,
+                operation_name,
+                match_patterns,
+                refresh=refresh,
+                follow_pagination=follow_pagination,
             )
         return self.search_resource_node_data(resource_node.name)
